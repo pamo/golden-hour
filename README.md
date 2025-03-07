@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Golden Hour Checker
 
-## Getting Started
+A lightweight web application that helps photographers determine the quality of the golden hour in their current location or a location of their choice. The app provides real-time weather data, golden hour timing, and sun direction guidance to help photographers capture the perfect shot.
 
-First, run the development server:
+![Golden Hour Checker App](https://placeholder.svg?height=400&width=800)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Location-based Weather Analysis**
+  - Use your current location or search for any location worldwide
+  - Check weather conditions that affect golden hour quality (clouds, rain, fog)
+  - Get a quality assessment based on current conditions
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Golden Hour Timing**
+  - View precise morning and evening golden hour times
+  - See countdown to the next golden hour
+  - Get notified when golden hour is currently happening
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Sun Direction Guidance**
+  - Visual compass showing sun position during golden hour
+  - Device orientation support on mobile to show sun direction relative to where you're pointing
+  - Sun azimuth information for precise positioning
 
-## Learn More
+- **Responsive Design**
+  - Works seamlessly on both mobile and desktop devices
+  - Dark mode support
+  - Intuitive, photographer-friendly interface
 
-To learn more about Next.js, take a look at the following resources:
+## Technologies Used
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Next.js** - React framework with App Router
+- **Tailwind CSS** - Utility-first CSS framework
+- **SunCalc** - Library for calculating sun position
+- **OpenWeatherMap API** - Weather data provider
+- **shadcn/ui** - UI component library
+- **Device Orientation API** - For compass functionality on mobile devices
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Installation
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/golden-hour-checker.git
+   cd golden-hour-checker
