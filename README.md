@@ -7,16 +7,19 @@ A lightweight web application that helps photographers determine the quality of 
 ## Features
 
 - **Location-based Weather Analysis**
+
   - Use your current location or search for any location worldwide
   - Check weather conditions that affect golden hour quality (clouds, rain, fog)
   - Get a quality assessment based on current conditions
 
 - **Golden Hour Timing**
+
   - View precise morning and evening golden hour times
   - See countdown to the next golden hour
   - Get notified when golden hour is currently happening
 
 - **Sun Direction Guidance**
+
   - Visual compass showing sun position during golden hour
   - Device orientation support on mobile to show sun direction relative to where you're pointing
   - Sun azimuth information for precise positioning
@@ -41,3 +44,4 @@ A lightweight web application that helps photographers determine the quality of 
    ```bash
    git clone https://github.com/yourusername/golden-hour-checker.git
    cd golden-hour-checker
+   ```
