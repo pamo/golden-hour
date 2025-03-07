@@ -1,7 +1,7 @@
 import SunCalc from 'suncalc';
 
 // Function to get weather data from OpenWeatherMap API
-export async function getWeatherData(lat, lon) {
+export async function getWeatherData(lat: number, lon: number) {
   try {
     const response = await fetch(
       `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY}`
@@ -19,9 +19,8 @@ export async function getWeatherData(lat, lon) {
 }
 
 // Function to calculate golden hour times and sun position
-export function getGoldenHourTimes(lat, lon) {
+export function getGoldenHourTimes(lat: number, lon: number) {
   const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
   // Get sun times for today
   const sunTimes = SunCalc.getTimes(now, lat, lon);

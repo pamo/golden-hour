@@ -4,7 +4,27 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Sun, CloudRain, Cloud, CloudFog, CloudLightning, CloudSnow } from 'lucide-react';
 
-export function WeatherInfo({ weatherData }) {
+export interface WeatherData {
+  weather: Array<{
+    main: string;
+    description: string;
+  }>;
+  main: {
+    temp: number;
+    humidity: number;
+  };
+  clouds?: {
+    all: number;
+  };
+  wind: {
+    speed: number;
+  };
+}
+
+interface WeatherInfoProps {
+  weatherData: WeatherData;
+}
+export function WeatherInfo({ weatherData }: WeatherInfoProps) {
   // Determine if weather conditions are good for golden hour
   const isGoodForGoldenHour = () => {
     const badConditions = ['Rain', 'Thunderstorm', 'Drizzle', 'Snow', 'Mist', 'Fog', 'Haze'];
@@ -65,8 +85,8 @@ export function WeatherInfo({ weatherData }) {
             </div>
           </div>
           <Badge
-            variant={isGoodForGoldenHour() ? 'success' : 'outline'}
-            className={isGoodForGoldenHour() ? 'bg-green-500' : ''}
+            variant={isGoodForGoldenHour() ? 'secondary' : 'outline'}
+            className={isGoodForGoldenHour() ? 'bg-green-500 text-white' : ''}
           >
             {isGoodForGoldenHour() ? 'Ideal' : 'Suboptimal'}
           </Badge>

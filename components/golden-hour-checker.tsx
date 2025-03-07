@@ -1,27 +1,21 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MapPin, Search, Sun, Loader2 } from 'lucide-react';
-import { WeatherInfo } from '@/components/weather-info';
+import { WeatherInfo, WeatherData } from '@/components/weather-info';
 import { SunDirection } from '@/components/sun-direction';
 import { GoldenHourTimes } from '@/components/golden-hour-times';
 import { getWeatherData, getGoldenHourTimes } from '@/lib/api';
 import { useToast } from '@/components/ui/use-toast';
-import { GoldenHourData } from "@/lib/types";
+import { GoldenHourData } from '@/lib/types';
 
 export function GoldenHourChecker() {
-  const [location, setLocation] = useState("");
-  const [searchLocation, setSearchLocation] = useState("");
+  const [location, setLocation] = useState('');
+  const [searchLocation, setSearchLocation] = useState('');
   const [, setCoordinates] = useState<{
     lat: number | null;
     lon: number | null;
@@ -29,13 +23,11 @@ export function GoldenHourChecker() {
     lat: null,
     lon: null,
   });
-  const [weatherData, setWeatherData] = useState(null);
-  const [goldenHourData, setGoldenHourData] = useState<GoldenHourData | null>(
-    null
-  );
-  const [deviceOrientation, setDeviceOrientation] = useState();
+  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
+  const [goldenHourData, setGoldenHourData] = useState<GoldenHourData | null>(null);
+  const [deviceOrientation, setDeviceOrientation] = useState<number | undefined>();
   const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState("current");
+  const [activeTab, setActiveTab] = useState('current');
   const { toast } = useToast();
 
   // Get current location
@@ -59,31 +51,30 @@ export function GoldenHourChecker() {
 
             fetchWeatherAndSunData(latitude, longitude);
           } catch (error) {
-            console.error("Error fetching location name:", error);
+            console.error('Error fetching location name:', error);
             toast({
-              title: "Error",
-              description: "Failed to get location name. Please try again.",
-              variant: "destructive",
-            });
-            setIsLoading(false);
-          }
-        },
-          (error) => {
-            console.error('Error getting location:', error);
-            toast({
-              title: 'Location Access Denied',
-              description: 'Please enable location services or use the search option.',
+              title: 'Error',
+              description: 'Failed to get location name. Please try again.',
               variant: 'destructive',
             });
             setIsLoading(false);
           }
+        },
+        (error) => {
+          console.error('Error getting location:', error);
+          toast({
+            title: 'Location Access Denied',
+            description: 'Please enable location services or use the search option.',
+            variant: 'destructive',
+          });
+          setIsLoading(false);
+        }
       );
     } else {
       toast({
-        title: "Geolocation Not Supported",
-        description:
-          "Your browser doesn't support geolocation. Please use the search option.",
-        variant: "destructive",
+        title: 'Geolocation Not Supported',
+        description: "Your browser doesn't support geolocation. Please use the search option.",
+        variant: 'destructive',
       });
       setIsLoading(false);
     }
@@ -107,18 +98,18 @@ export function GoldenHourChecker() {
         fetchWeatherAndSunData(lat, lon);
       } else {
         toast({
-          title: "Location Not Found",
-          description: "Please try a different location name.",
-          variant: "destructive",
+          title: 'Location Not Found',
+          description: 'Please try a different location name.',
+          variant: 'destructive',
         });
         setIsLoading(false);
       }
     } catch (error) {
-      console.error("Error searching location:", error);
+      console.error('Error searching location:', error);
       toast({
-        title: "Search Error",
-        description: "Failed to search location. Please try again.",
-        variant: "destructive",
+        title: 'Search Error',
+        description: 'Failed to search location. Please try again.',
+        variant: 'destructive',
       });
       setIsLoading(false);
     }
@@ -135,22 +126,22 @@ export function GoldenHourChecker() {
 
       setIsLoading(false);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error('Error fetching data:', error);
       toast({
-        title: "Data Fetch Error",
-        description: "Failed to get weather or sun data. Please try again.",
-        variant: "destructive",
+        title: 'Data Fetch Error',
+        description: 'Failed to get weather or sun data. Please try again.',
+        variant: 'destructive',
       });
       setIsLoading(false);
     }
   };
 
-  // Handle device orientation for compass
   useEffect(() => {
-    const handleOrientation = (event) => {
+    const handleOrientation = (event: DeviceOrientationEvent) => {
       // For iOS devices
-      if (event.webkitCompassHeading) {
-        setDeviceOrientation(event.webkitCompassHeading);
+      if ('webkitCompassHeading' in event) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        setDeviceOrientation((event as any).webkitCompassHeading);
       }
       // For Android devices
       else if (event.alpha) {
@@ -159,16 +150,16 @@ export function GoldenHourChecker() {
     };
 
     if (window.DeviceOrientationEvent) {
-      window.addEventListener("deviceorientation", handleOrientation, true);
+      window.addEventListener('deviceorientation', handleOrientation, true);
     }
 
     return () => {
-      window.removeEventListener("deviceorientation", handleOrientation, true);
+      window.removeEventListener('deviceorientation', handleOrientation, true);
     };
   }, []);
 
   return (
-    <Card className="w-full max-w-3xl mx-auto bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm">
+    <Card className="mx-auto w-full max-w-3xl bg-white/90 backdrop-blur-sm dark:bg-slate-800/90">
       <CardHeader>
         <CardTitle className="flex items-center justify-center gap-2">
           <Sun className="h-6 w-6 text-amber-500" />
@@ -192,7 +183,7 @@ export function GoldenHourChecker() {
           <TabsContent value="current" className="mt-4">
             <Button
               onClick={getCurrentLocation}
-              className="w-full bg-amber-600 hover:bg-amber-700 text-white"
+              className="w-full bg-amber-600 text-white hover:bg-amber-700"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -209,11 +200,11 @@ export function GoldenHourChecker() {
                 placeholder="Enter city name..."
                 value={searchLocation}
                 onChange={(e) => setSearchLocation(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               />
               <Button
                 onClick={handleSearch}
-                className="bg-amber-600 hover:bg-amber-700 text-white"
+                className="bg-amber-600 text-white hover:bg-amber-700"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -235,18 +226,15 @@ export function GoldenHourChecker() {
 
             <WeatherInfo weatherData={weatherData} />
 
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid gap-6 md:grid-cols-2">
               <GoldenHourTimes goldenHourData={goldenHourData} />
-              <SunDirection
-                goldenHourData={goldenHourData}
-                deviceOrientation={deviceOrientation}
-              />
+              <SunDirection goldenHourData={goldenHourData} deviceOrientation={deviceOrientation} />
             </div>
           </div>
         ) : (
           !isLoading && (
-            <div className="text-center py-8 text-muted-foreground">
-              <Sun className="h-12 w-12 mx-auto mb-4 text-amber-400 opacity-50" />
+            <div className="py-8 text-center text-muted-foreground">
+              <Sun className="mx-auto mb-4 h-12 w-12 text-amber-400 opacity-50" />
               <p>Select your location to check golden hour quality</p>
             </div>
           )

@@ -3,4 +3,7 @@ export interface GoldenHourData {
   morningEnd: Date;
   eveningStart: Date;
   eveningEnd: Date;
+  morningSunAzimuth: number;
+  eveningSunAzimuth: number;
+  currentSunAzimuth: number;
 }

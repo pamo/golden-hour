@@ -3,9 +3,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Compass } from 'lucide-react';
+import { GoldenHourData } from '@/lib/types';
+interface SunDirectionProps {
+  goldenHourData: GoldenHourData;
+  deviceOrientation: number | undefined;
+}
 
-export function SunDirection({ goldenHourData, deviceOrientation }) {
-  const canvasRef = useRef(null);
+export function SunDirection({ goldenHourData, deviceOrientation }: SunDirectionProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [compassAvailable, setCompassAvailable] = useState(false);
 
   useEffect(() => {
@@ -14,8 +19,8 @@ export function SunDirection({ goldenHourData, deviceOrientation }) {
 
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     const ctx = canvas.getContext('2d');
+    if (!ctx) return;
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
     const radius = Math.min(centerX, centerY) - 20;
@@ -39,8 +44,7 @@ export function SunDirection({ goldenHourData, deviceOrientation }) {
     ctx.textBaseline = 'middle';
 
     // Adjust text positions based on device orientation if available
-    const rotation = deviceOrientation !== null ? deviceOrientation : 0;
-
+    const rotation = deviceOrientation ?? 0;
     // Draw N, S, E, W with rotation
     const directions = [
       { label: 'N', angle: 0 - rotation * (Math.PI / 180) },

@@ -5,7 +5,6 @@ import type React from 'react';
 import { useState, useEffect, useCallback } from 'react';
 
 const TOAST_LIMIT = 5;
-const TOAST_REMOVE_DELAY = 1000;
 
 export type ToastActionElement = React.ReactElement;
 
@@ -29,6 +28,8 @@ type ToasterToast = ToastProps & {
   title?: React.ReactNode;
   description?: React.ReactNode;
   action?: ToastActionElement;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 };
 
 const actionTypes = {
