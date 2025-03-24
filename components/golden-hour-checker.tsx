@@ -41,7 +41,6 @@ export function GoldenHourChecker() {
           setCoordinates({ lat: latitude, lon: longitude });
 
           try {
-            // Get location name from coordinates
             const response = await fetch(
               `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY}`
             );
@@ -81,7 +80,6 @@ export function GoldenHourChecker() {
     }
   };
 
-  // Search for a location
   const handleSearch = async () => {
     if (!searchLocation.trim()) return;
 
@@ -116,7 +114,6 @@ export function GoldenHourChecker() {
     }
   };
 
-  // Fetch weather and sun position data
   const fetchWeatherAndSunData = async (lat: number, lon: number) => {
     try {
       const weather = await getWeatherData(lat, lon);

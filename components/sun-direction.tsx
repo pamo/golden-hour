@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useEffect, useRef, useState } from 'react';
+
 import { Compass } from 'lucide-react';
 import { GoldenHourData } from '@/lib/types';
 interface SunDirectionProps {
@@ -25,10 +26,8 @@ export function SunDirection({ goldenHourData, deviceOrientation }: SunDirection
     const centerY = canvas.height / 2;
     const radius = Math.min(centerX, centerY) - 20;
 
-    // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw compass
     ctx.beginPath();
     ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
     ctx.fillStyle = '#fef3c7'; // amber-100
@@ -37,15 +36,12 @@ export function SunDirection({ goldenHourData, deviceOrientation }: SunDirection
     ctx.strokeStyle = '#d97706'; // amber-600
     ctx.stroke();
 
-    // Draw cardinal directions
     ctx.font = '14px sans-serif';
     ctx.fillStyle = '#78350f'; // amber-900
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
-    // Adjust text positions based on device orientation if available
     const rotation = deviceOrientation ?? 0;
-    // Draw N, S, E, W with rotation
     const directions = [
       { label: 'N', angle: 0 - rotation * (Math.PI / 180) },
       { label: 'E', angle: Math.PI / 2 - rotation * (Math.PI / 180) },
@@ -59,7 +55,6 @@ export function SunDirection({ goldenHourData, deviceOrientation }: SunDirection
       ctx.fillText(dir.label, x, y);
     });
 
-    // Draw sun position for morning and evening golden hour
     const now = new Date();
     let sunPosition;
 

@@ -19,13 +19,20 @@ export interface WeatherData {
     main: {
       temp: number;
       humidity: number;
+      pressure: number;
     };
     clouds: {
       all: number;
+      high?: number;
+      low?: number;
+      mid?: number;
     };
     wind: {
       speed: number;
+      deg: number;
     };
+    visibility: number;
+    pop: number; // Probability of precipitation
   }>;
 }
 
@@ -33,6 +40,12 @@ interface WeatherInfoProps {
   weatherData: WeatherData;
   sunriseTime: Date;
   sunsetTime: Date;
+}
+
+interface AfterglowPrediction {
+  quality: 'Excellent' | 'Good' | 'Moderate' | 'Poor';
+  description: string;
+  factors: string[];
 }
 
 export function WeatherInfo({ weatherData, sunriseTime, sunsetTime }: WeatherInfoProps) {
@@ -82,6 +95,81 @@ export function WeatherInfo({ weatherData, sunriseTime, sunsetTime }: WeatherInf
     }
   };
 
+  const predictAfterglow = (forecast: WeatherData['list'][0]): AfterglowPrediction => {
+    const factors: string[] = [];
+    let quality: AfterglowPrediction['quality'] = 'Moderate';
+
+    // Cloud analysis
+    const highClouds = forecast.clouds.high || 0;
+    const lowClouds = forecast.clouds.low || 0;
+
+    if (highClouds > 30 && highClouds < 70) {
+      factors.push('High-level clouds present - good for light scattering');
+    } else if (highClouds >= 70) {
+      factors.push('Too many high clouds - may block afterglow');
+      quality = 'Poor';
+    }
+
+    if (lowClouds > 30) {
+      factors.push('Low clouds present - may block afterglow');
+      quality = 'Poor';
+    }
+
+    // Humidity analysis
+    if (forecast.main.humidity > 70) {
+      factors.push('High humidity - good for light scattering');
+      if (quality !== 'Poor') quality = 'Good';
+    } else if (forecast.main.humidity < 30) {
+      factors.push('Low humidity - may reduce afterglow intensity');
+      if (quality === 'Moderate') quality = 'Poor';
+    }
+
+    // Visibility analysis
+    if (forecast.visibility < 5000) {
+      factors.push('Poor visibility - may enhance afterglow colors');
+      if (quality !== 'Poor') quality = 'Good';
+    } else if (forecast.visibility > 20000) {
+      factors.push('Very clear air - may reduce afterglow intensity');
+      if (quality === 'Moderate') quality = 'Poor';
+    }
+
+    // Wind analysis
+    if (forecast.wind.speed > 20) {
+      factors.push('Strong winds - may disperse atmospheric particles');
+      if (quality === 'Good') quality = 'Moderate';
+    }
+
+    // Precipitation probability
+    if (forecast.pop > 0.3) {
+      factors.push('Possible precipitation - may affect afterglow');
+      if (quality === 'Good') quality = 'Moderate';
+    }
+
+    // Temperature gradient (using pressure as a proxy)
+    if (forecast.main.pressure < 1000) {
+      factors.push('Low pressure - may enhance atmospheric effects');
+      if (quality === 'Good') quality = 'Excellent';
+    }
+
+    let description = '';
+    switch (quality) {
+      case 'Excellent':
+        description = 'Perfect conditions for vibrant afterglow';
+        break;
+      case 'Good':
+        description = 'Good conditions for afterglow';
+        break;
+      case 'Moderate':
+        description = 'Moderate conditions for afterglow';
+        break;
+      case 'Poor':
+        description = 'Poor conditions for afterglow';
+        break;
+    }
+
+    return { quality, description, factors };
+  };
+
   const formatTemperature = (kelvin: number) => {
     if (useMetric) {
       return `${Math.round(kelvin - 273.15)}°C`;
@@ -99,6 +187,7 @@ export function WeatherInfo({ weatherData, sunriseTime, sunsetTime }: WeatherInf
   const WeatherCard = ({ forecast }: { forecast: WeatherData['list'][0] }) => {
     const isGood = isGoodForGoldenHour(forecast);
     const main = forecast.weather[0].main;
+    const afterglow = predictAfterglow(forecast);
 
     return (
       <Card className={`border-l-4 ${isGood ? 'border-l-green-500' : 'border-l-amber-500'}`}>
@@ -135,6 +224,38 @@ export function WeatherInfo({ weatherData, sunriseTime, sunsetTime }: WeatherInf
             <div>
               <p className="text-muted-foreground">Wind</p>
               <p className="font-medium">{formatWindSpeed(forecast.wind.speed)}</p>
+            </div>
+          </div>
+
+          <div className="mt-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <h4 className="font-medium">Afterglow Prediction</h4>
+              <Badge
+                variant="outline"
+                className={
+                  afterglow.quality === 'Excellent'
+                    ? 'bg-purple-500 text-white'
+                    : afterglow.quality === 'Good'
+                      ? 'bg-blue-500 text-white'
+                      : afterglow.quality === 'Moderate'
+                        ? 'bg-yellow-500 text-white'
+                        : 'bg-red-500 text-white'
+                }
+              >
+                {afterglow.quality}
+              </Badge>
+            </div>
+            <p className="text-sm text-muted-foreground">{afterglow.description}</p>
+            <div className="space-y-2">
+              <h5 className="text-sm font-medium">Key Factors:</h5>
+              <ul className="space-y-1 text-sm text-muted-foreground">
+                {afterglow.factors.map((factor, index) => (
+                  <li key={index} className="flex items-center gap-2">
+                    <span className="text-xs">•</span>
+                    {factor}
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
 
