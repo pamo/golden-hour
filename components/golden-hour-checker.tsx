@@ -1,17 +1,18 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Loader2, MapPin, Search, Sun } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MapPin, Search, Sun, Loader2 } from 'lucide-react';
-import { WeatherInfo, WeatherData } from '@/components/weather-info';
-import { SunDirection } from '@/components/sun-direction';
-import { GoldenHourTimes } from '@/components/golden-hour-times';
-import { getWeatherData, getGoldenHourTimes } from '@/lib/api';
-import { useToast } from '@/components/ui/use-toast';
+import { WeatherData, WeatherInfo } from '@/components/weather-info';
+import { getGoldenHourTimes, getWeatherData } from '@/lib/api';
+import { useEffect, useState } from 'react';
+
+import { Button } from '@/components/ui/button';
 import { GoldenHourData } from '@/lib/types';
+import { GoldenHourTimes } from '@/components/golden-hour-times';
+import { Input } from '@/components/ui/input';
+import { SunDirection } from '@/components/sun-direction';
+import { useToast } from '@/components/ui/use-toast';
 
 export function GoldenHourChecker() {
   const [location, setLocation] = useState('');
@@ -224,7 +225,11 @@ export function GoldenHourChecker() {
               <span>{location}</span>
             </div>
 
-            <WeatherInfo weatherData={weatherData} />
+            <WeatherInfo
+              weatherData={weatherData}
+              sunriseTime={goldenHourData.morningStart}
+              sunsetTime={goldenHourData.eveningStart}
+            />
 
             <div className="grid gap-6 md:grid-cols-2">
               <GoldenHourTimes goldenHourData={goldenHourData} />

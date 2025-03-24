@@ -1,10 +1,27 @@
 import SunCalc from 'suncalc';
 
-// Function to get weather data from OpenWeatherMap API
+interface ForecastData {
+  dt: number;
+  weather: Array<{
+    main: string;
+    description: string;
+  }>;
+  main: {
+    temp: number;
+    humidity: number;
+  };
+  clouds: {
+    all: number;
+  };
+  wind: {
+    speed: number;
+  };
+}
+
 export async function getWeatherData(lat: number, lon: number) {
   try {
     const response = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY}`
+      `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY}`
     );
 
     if (!response.ok) {
@@ -18,21 +35,27 @@ export async function getWeatherData(lat: number, lon: number) {
   }
 }
 
-// Function to calculate golden hour times and sun position
+export function findClosestForecast(forecasts: ForecastData[], targetTime: Date): ForecastData {
+  return forecasts.reduce((closest, current) => {
+    const currentTime = new Date(current.dt * 1000);
+    const closestTime = new Date(closest.dt * 1000);
+    const currentDiff = Math.abs(currentTime.getTime() - targetTime.getTime());
+    const closestDiff = Math.abs(closestTime.getTime() - targetTime.getTime());
+    return currentDiff < closestDiff ? current : closest;
+  });
+}
+
 export function getGoldenHourTimes(lat: number, lon: number) {
   const now = new Date();
 
-  // Get sun times for today
   const sunTimes = SunCalc.getTimes(now, lat, lon);
 
-  // Golden hour is typically about 1 hour before sunset and after sunrise
   const morningGoldenHourStart = sunTimes.sunrise;
   const morningGoldenHourEnd = new Date(morningGoldenHourStart.getTime() + 60 * 60 * 1000);
 
   const eveningGoldenHourStart = new Date(sunTimes.sunset.getTime() - 60 * 60 * 1000);
   const eveningGoldenHourEnd = sunTimes.sunset;
 
-  // Get sun position (azimuth) for morning and evening golden hour
   const morningSunPosition = SunCalc.getPosition(
     new Date(morningGoldenHourStart.getTime() + 30 * 60 * 1000),
     lat,
@@ -45,10 +68,8 @@ export function getGoldenHourTimes(lat: number, lon: number) {
     lon
   );
 
-  // Get current sun position
   const currentSunPosition = SunCalc.getPosition(now, lat, lon);
 
-  // Convert azimuth from radians to degrees
   const morningSunAzimuth = ((morningSunPosition.azimuth * 180) / Math.PI + 180) % 360;
   const eveningSunAzimuth = ((eveningSunPosition.azimuth * 180) / Math.PI + 180) % 360;
   const currentSunAzimuth = ((currentSunPosition.azimuth * 180) / Math.PI + 180) % 360;
